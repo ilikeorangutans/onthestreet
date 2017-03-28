@@ -14,7 +14,11 @@ function Stat:new(o)
 end
 
 function Stat:update(dt, modifier)
-  self.value = self.value + (dt * modifier)
+  self:add(dt * modifier)
+end
+
+function Stat:add(amount)
+  self.value = self.value + amount
   if self.value > self.max then self.value = self.max end
   if self.value < self.min then self.value = self.min end
 end
