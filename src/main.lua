@@ -2,10 +2,15 @@ local ui = require('love2dboxes')
 local Time = require('time')
 local Stat = require('stat')
 local Character = require('character')
+local Street = require('street')
+local StreetView = require('street_view')
 
 local character = Character:new()
 local time = Time:new()
 local timeModifier = 1
+
+local street = nil
+local streetView = nil
 
 local lastTimestamp = 0
 function love.load()
@@ -13,12 +18,17 @@ function love.load()
   lastTimestamp = time:timestamp()
   love.keyboard.setKeyRepeat(true)
   local w, h = love.window.getMode()
+
+  street = Street:new()
+  streetView = StreetView:new({street=street, w=w, h=h})
 end
 
 function love.resize(w, h)
 end
 
 function love.draw()
+  streetView:draw()
+
   local w, h = love.window.getMode()
   local x = (w / 2) - 30
   local y = h - 200
@@ -83,6 +93,19 @@ end
 
 local countdown = 0
 local gameGoing = true
+
+function love.mousereleased(x, y, button, istouch)
+  local coords = streetView:toWorld({x=x, y=y})
+
+  for _, item in ipairs(street.interactables) do
+    if item.x < coords.x and coords.x < item.x + item.w and item.y < coords.y and coords.y < item.y + item.h then
+
+      if button == 1 then
+        print("BLARGH")
+      end
+    end
+  end
+end
 
 function love.update(dt)
   if gameGoing then
