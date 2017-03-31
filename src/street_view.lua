@@ -35,7 +35,12 @@ function StreetView:draw()
     if visible:show(item) then
       --print("Showing item " .. i .. ": " .. item.title)
 
-      love.graphics.setColor(128, 128, 128)
+      if item.highlight then
+        love.graphics.setColor(255, 128, 0, 255)
+        love.graphics.rectangle('fill', item.x - 2, item.y - 2, item.w + 4, item.h + 4)
+      end
+
+      love.graphics.setColor(128, 128, 128, 255)
       local coords = self:toScreen(item)
       love.graphics.rectangle('fill', coords.x, coords.y, item.w, item.h)
     end

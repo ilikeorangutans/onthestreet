@@ -16,8 +16,8 @@ local activities = {
     modifiers = {
       energy = -0.05,
     },
-    begin = function(activity)
-      print("You begin searching")
+    begin = function(activity, item)
+      print("You begin searching " .. item.title)
       activity.time = 0
     end,
     engage = function(activity, character, dt)

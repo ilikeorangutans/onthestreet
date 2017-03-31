@@ -11,6 +11,7 @@ local timeModifier = 1
 
 local street = nil
 local streetView = nil
+local highlighted = nil
 
 local lastTimestamp = 0
 function love.load()
@@ -55,7 +56,11 @@ function love.keyreleased(key, scancode)
     character:sleep()
   end
   if key == 'q' then
-    character:startActivity('search') -- TODO add second parameter to add an object related to the activity?
+    if highlighted then
+      character:startActivity('search', highlighted)
+    else
+      print("Nothing to search")
+    end
   end
   if key == 'e' then
     local index = nil
@@ -93,6 +98,21 @@ end
 
 local countdown = 0
 local gameGoing = true
+
+function love.mousemoved(x, y)
+  local coords = streetView:toWorld({x=x, y=y})
+  local hover = nil
+  for _, item in ipairs(street.interactables) do
+    if item.x < coords.x and coords.x < item.x + item.w and item.y < coords.y and coords.y < item.y + item.h then
+      item.highlight = true
+      hover = item
+    else
+      item.highlight = false
+    end
+  end
+
+  highlighted = hover
+end
 
 function love.mousereleased(x, y, button, istouch)
   local coords = streetView:toWorld({x=x, y=y})
