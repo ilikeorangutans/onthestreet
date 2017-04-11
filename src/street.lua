@@ -12,21 +12,31 @@ function Street:new(o)
     title = "Trashcan",
     x = 10,
     y = 20,
-    w = 10,
+    w = 80,
     h = 40,
+    searchable = true,
   })
   table.insert(o.interactables, {
     title = "Trashcan",
     x = 1000,
     y = 200,
-    w = 10,
+    w = 80,
     h = 40,
+    searchable = true,
   })
   table.insert(o.interactables, {
     title = "Trashcan",
     x = 800,
     y = 200,
-    w = 10,
+    w = 80,
+    h = 40,
+    searchable = true,
+  })
+  table.insert(o.interactables, {
+    title = "Fire Hydrant",
+    x = 400,
+    y = 300,
+    w = 20,
     h = 40,
   })
 

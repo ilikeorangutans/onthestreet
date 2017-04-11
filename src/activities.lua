@@ -4,6 +4,9 @@ local activities = {
     modifiers = {
       -- boredom?
     },
+    canDo = function(activity, with)
+      return true
+    end,
     begin = function(activity)
       print("You're loitering idly")
     end,
@@ -16,6 +19,10 @@ local activities = {
     modifiers = {
       energy = -0.05,
     },
+    canDo = function(activity, with)
+      return with and with.searchable
+    end,
+    minDistance = 50,
     begin = function(activity, item)
       print("You begin searching " .. item.title)
       activity.time = 0
@@ -59,6 +66,9 @@ local activities = {
       print("You eat the " .. object.title)
       activity.item = object
       activity.time = 0
+    end,
+    canDo = function(activity, with)
+      return true
     end,
     engage = function(activity, character, dt)
       activity.time = activity.time + dt

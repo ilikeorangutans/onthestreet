@@ -1,3 +1,4 @@
+local Point = require('point')
 local Time = require('time')
 local Stat = require('stat')
 local Character = require('character')
@@ -14,8 +15,6 @@ local highlighted = nil
 
 local lastTimestamp = 0
 
-local pos = { x=40,y=50 }
-
 mousepos = {x=0,y=0}
 
 function love.load()
@@ -25,7 +24,7 @@ function love.load()
   local w, h = love.window.getMode()
 
   street = Street:new()
-  streetView = StreetView:new({street=street, w=w - 20, h=h - 120, screenx=10, screeny=10})
+  streetView = StreetView:new({street=street, w=w - 20, h=h - 120, screenx=10, screeny=20})
   streetView:center({x=0, y=0})
 end
 
@@ -38,38 +37,32 @@ function love.draw()
   local w, h = love.window.getMode()
   local x = (w / 2) - 30
   local y = h - 200
-  local pos = street:moveTo(pos)
   love.graphics.setColor(255, 255, 255)
-  local screenCoords = streetView:toScreen(pos)
+  local screenCoords = streetView:toScreen(character.position)
   love.graphics.rectangle('fill', screenCoords.x, screenCoords.y, 60, 100)
 
+  local pos = character.position
+  love.graphics.print(string.format("Position: %d/%d", pos.x, pos.y ), 10, h - 60)
   local coords = streetView:toWorld(mousepos)
   love.graphics.print(("Mouse: %d/%d, game world: %d/%d"):format(mousepos.x, mousepos.y, coords.x, coords.y), 10, h - 40)
   love.graphics.print(("World: %d/%d"):format(streetView.x, streetView.y), 10, h - 20)
+
+  local state = character:state()
+  local status = "[" .. timeModifier .. "] " .. time:date() .. " " .. time:time() .. " " .. state.title .. ": " .. character:activity().title .. ", energy: " .. character.stats['energy'].value .. ", nutrition: " .. character.stats['nutrition'].value
+  status = string.format("[%d] %s %s %s: %s, energy: %6.2f, nutrition: %6.2f", timeModifier, time:date(), time:time(), state.title, character:activity().title, character.stats['energy'].value, character.stats['nutrition'].value)
+  love.graphics.print(status, 10, 3)
 end
 
 function love.keypressed(key, scancode, isrepeat)
-  local amount = 6
-  if key == 'a' then
-    move(-amount, 0)
-  end
-  if key == 's' then
-    move(0, amount)
-  end
-  if key == 'd' then
-    move(amount, 0)
-  end
-  if key == 'w' then
-    move(0, -amount)
-  end
 end
 
 function move(dx, dy)
-  pos.x = pos.x + dx
-  pos.y = pos.y + dy
-  pos = street:moveTo(pos)
+  character.position.x = character.position.x + dx
+  character.position.y = character.position.y + dy
+  local newPos = street:moveTo(character.position)
 
-  streetView:center(pos)
+  character.position:update(newPos)
+  streetView:center(character.position)
 end
 
 function love.keyreleased(key, scancode)
@@ -155,6 +148,21 @@ function love.mousereleased(x, y, button, istouch)
 end
 
 function love.update(dt)
+
+  local amount = 3
+  if love.keyboard.isDown('a') then
+    move(-amount, 0)
+  end
+  if love.keyboard.isDown('s') then
+    move(0, amount)
+  end
+  if love.keyboard.isDown('d') then
+    move(amount, 0)
+  end
+  if love.keyboard.isDown('w') then
+    move(0, -amount)
+  end
+
   if gameGoing then
     local state = character:state()
     local timeStep = state.timestep * timeModifier
@@ -170,12 +178,12 @@ function love.update(dt)
       gameGoing = false
     end
 
-    if countdown >= 1 then
+    if countdown >= 2 then
       print("--< [x" .. timeModifier .. "] " .. time:date() .. " " .. time:time() .. " " .. state.title .. ": " .. character:activity().title .. ", energy: " .. character.stats['energy'].value .. ", nutrition: " .. character.stats['nutrition'].value .. " >--------------")
       countdown = 0
     end
     countdown = countdown + dt
   end
-
 end
+
 

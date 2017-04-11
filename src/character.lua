@@ -1,5 +1,7 @@
 local Stat = require('stat')
+local Point = require('point')
 local activities = require('activities')
+
 local Character = {}
 
 function Character:new(o)
@@ -14,10 +16,7 @@ function Character:new(o)
     end
   }
 
-  o.position = {
-    x = 0,
-    y = 0
-  }
+  o.position = Point:new(40, 40)
 
   o.stats = {}
   local energy = Stat:new({title = "Energy"})
@@ -100,14 +99,26 @@ function Character:new(o)
   return o
 end
 
-function Character:startActivity(name, object)
+function Character:startActivity(name, with)
   local activity = activities[name]
   if not activity then
     print("Don't know how to do " .. name)
     return
   end
 
-  activity:begin(object)
+  if not activity:canDo(with) then
+    print(string.format("Can't do %s with %q", name, with.title))
+    return
+  end
+
+  if with and with.minDistance then
+    local distance = self.position:distance(with)
+    if distance > activity.minDistance then
+      print(string.format("Cannot %s, too far away!", name))
+      return
+    end
+  end
+  activity:begin(with)
   self.currentActivity = activity
 end
 

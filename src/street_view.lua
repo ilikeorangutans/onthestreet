@@ -49,10 +49,9 @@ function StreetView:draw()
       end
 
       love.graphics.setColor(128, 128, 128, 255)
-      --print("Showing item " .. i .. ": " .. item.title .. " at " .. item.x .. "/" .. item.y .. " = " .. coords.x .. "/" .. coords.y)
       love.graphics.rectangle('fill', coords.x, coords.y, item.w, item.h)
       love.graphics.setColor(255, 0, 0, 255)
-      love.graphics.print("@" .. coords.x .. "/" .. coords.y, coords.x, coords.y)
+      love.graphics.print(item.title, coords.x, coords.y)
     end
   end
 
