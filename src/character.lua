@@ -111,7 +111,7 @@ function Character:startActivity(name, with)
     return
   end
 
-  if with and with.minDistance then
+  if with and activity.minDistance then
     local distance = self.position:distance(with)
     if distance > activity.minDistance then
       print(string.format("Cannot %s, too far away!", name))

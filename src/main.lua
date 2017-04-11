@@ -63,6 +63,9 @@ function move(dx, dy)
 
   character.position:update(newPos)
   streetView:center(character.position)
+
+  local coords = streetView:toWorld({x=mousepos.x, y=mousepos.y})
+  checkHover(coords.x, coords.y)
 end
 
 function love.keyreleased(key, scancode)
@@ -118,10 +121,16 @@ local gameGoing = true
 
 function love.mousemoved(x, y)
   local coords = streetView:toWorld({x=x, y=y})
+  checkHover(coords.x, coords.y)
+  mousepos.x = x
+  mousepos.y = y
+end
+
+function checkHover(x, y)
   local hover = nil
   for _, item in ipairs(street.interactables) do
     --print("Checking highlight: " .. item.x .. "/" .. item.y .. " mouse " .. coords.x .. "/" .. coords.y)
-    if item.x < coords.x and coords.x <= item.x + item.w + 1 and item.y < coords.y and coords.y <= item.y + item.h + 1 then
+    if item.x < x and x <= item.x + item.w + 1 and item.y < y and y <= item.y + item.h + 1 then
       item.highlight = true
       hover = item
     else
@@ -130,8 +139,6 @@ function love.mousemoved(x, y)
   end
 
   highlighted = hover
-  mousepos.x = x
-  mousepos.y = y
 end
 
 function love.mousereleased(x, y, button, istouch)
@@ -149,7 +156,7 @@ end
 
 function love.update(dt)
 
-  local amount = 3
+  local amount = 5
   if love.keyboard.isDown('a') then
     move(-amount, 0)
   end

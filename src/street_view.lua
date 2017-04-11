@@ -1,3 +1,4 @@
+local Point = require('point')
 local StreetView = {}
 
 function StreetView:new(o)
@@ -39,6 +40,14 @@ function StreetView:draw()
     end
   }
 
+  for i, block in ipairs(self.street.blocks) do
+    local left = self:toScreen({x=block.left, y=block.height})
+    local right = self:toScreen({x=block.right, y=block.height})
+
+    love.graphics.setColor(80, 80, 80)
+    love.graphics.rectangle('fill', left.x, 0, right.x - left.x, left.y)
+  end
+
   for i, item in ipairs(self.street.interactables) do
     if visible:show(item) then
       local coords = self:toScreen(item)
@@ -46,18 +55,15 @@ function StreetView:draw()
       if item.highlight then
         love.graphics.setColor(255, 128, 0, 255)
         love.graphics.rectangle('fill', coords.x - 2, coords.y - 2, item.w + 4, item.h + 4)
+
+        love.graphics.setColor(255, 0, 0, 255)
+        love.graphics.print(item.title, coords.x, coords.y - 20)
       end
 
       love.graphics.setColor(128, 128, 128, 255)
       love.graphics.rectangle('fill', coords.x, coords.y, item.w, item.h)
-      love.graphics.setColor(255, 0, 0, 255)
-      love.graphics.print(item.title, coords.x, coords.y)
     end
   end
-
-  love.graphics.setColor(255, 0, 0)
-  local pos = self:toScreen({x=0, y=0})
-  love.graphics.line(pos.x, 0, pos.x, 600)
 end
 
 function StreetView:toScreen(coord)

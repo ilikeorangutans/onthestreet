@@ -22,7 +22,7 @@ local activities = {
     canDo = function(activity, with)
       return with and with.searchable
     end,
-    minDistance = 50,
+    minDistance = 150,
     begin = function(activity, item)
       print("You begin searching " .. item.title)
       activity.time = 0
